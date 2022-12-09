@@ -12,5 +12,7 @@ RUN openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -config openssl.conf \
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 
+WORKDIR /usr/share/nginx/html
+
 # Remove default index.html
-RUN rm index.html
+RUN rm index.html 50x.html

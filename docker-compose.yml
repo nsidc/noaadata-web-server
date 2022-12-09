@@ -5,7 +5,9 @@ services:
   data-server:
     image: "nsidc/noaa-web-server:${SERVER_VERSION:-latest}"
     volumes:
-      - 
+      - "/projects/DATASETS/NOAA:/usr/share/nginx/html/NOAA:ro" 
+      - "/projects/DATASETS/nsidc0008_HARA_arctic_sounding_v01:/usr/share/nginx/html/nsidc-0008:ro" 
+      - "/share/logs/noaa-web:/var/log/nginx:rw"
     ports:
       - "80:80"
       - "443:443"
