@@ -8,8 +8,6 @@ REPO_ROOT_DIR="$(dirname "$THIS_DIR")"
 
 VERSION_FILE="$REPO_ROOT_DIR/VERSION.env"
 
-source /etc/profile.d/envvars.sh
-
 cd "$REPO_ROOT_DIR"
 
 if [ "$ENVIRONMENT" = "integration" ]; then
