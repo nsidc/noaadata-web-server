@@ -57,8 +57,12 @@ foreach my $dataset (@datasets) {
         print "$dataset,    ", scalar(keys %{$unique_users{$dataset}}),", $dataset_downloads{$dataset}, $dataset_sizes{$dataset}\n";
 }
 print "\n";
+print "Transfers by Domain\n";
+print "-----------------------------------------------------\n";
+print "Domain Type, Distinct Users, # of Files, Volume (MB) \n";
+print "-----------------------------------------------------\n";
 foreach my $country_code (keys %domain_info) {
-  print "$country_code, ", scalar(keys %{$domain_info{$country_code}{users}}), "\n"; 
+  print "$country_code, ", scalar(keys %{$domain_info{$country_code}{users}}), ", $domain_info{$country_code}{downloads},  $domain_info{$country_code}{volume}\n"; 
 }
 print "\n";
 print "total size $total_size\n";
