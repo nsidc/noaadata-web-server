@@ -39,11 +39,11 @@ foreach my $line_from_file (@list_from_file) {
         $total_downloads++;
 
         if (! exists $ip_info{$fields_from_line[3]}) {
-          $ip_info{$fields_from_line[3]} = join("", `nslookup $fields_from_line[3]`);
+          $ip_info{$fields_from_line[3]} = join("", `/usr/bin/host $fields_from_line[3]`);
           $ip_info{$fields_from_line[3]} =~ s/\s//sg;
         }
         (my $country_code) = $ip_info{$fields_from_line[3]} =~ /\.([^\.]+)\.$/s;
-        $domain_info{$country_codes{$country_code}}{users}{$fields_from_line[3]} = 1;
+	$domain_info{$country_codes{$country_code}}{users}{$fields_from_line[3]} = 1;
         $domain_info{$country_codes{$country_code}}{downloads}++;
         $domain_info{$country_codes{$country_code}}{volume}+= $fields_from_line[4];
 }
