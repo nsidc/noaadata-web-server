@@ -1,6 +1,8 @@
-import pathlib as path
-import country_codes
+from pathlib import Path
+
+# import country_codes
 from misc import RawLogFields, ProcessedLogFields
+
 
 # Create a TypedDict with the fields we will use in our script
 def get_log_lines() -> list[str]:
@@ -8,7 +10,13 @@ def get_log_lines() -> list[str]:
     
     From /share/logs/noaa-web/download.log.
     """
-    ...
+    log_file = Path('/share/logs/noaa-web-all/integration/download.log')
+    log_lines = []
+    with open(log_file) as file:
+        log_lines = [line.rstrip() for line in file]
+
+    return log_lines
+
 
 def lines_to_raw_fields(log_lines: list[str]) -> list[RawLogFields]:
     """Convert log lines into self describing data structures."""
