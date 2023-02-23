@@ -2,7 +2,7 @@ from pathlib import Path
 from socket import gethostbyaddr
 import datetime as dt
 
-from country_codes import CountryCodes
+from constants.country_codes import COUNTRY_CODES
 from misc import RawLogFields, ProcessedLogFields
 
 
@@ -46,7 +46,7 @@ def ip_address_to_ip_location(log_dict_raw) -> str:
     ip = log_dict_raw.ip_address
     hostname = gethostbyaddr(ip)[0]
     host_suffix = hostname.split('.')[-1]
-    ip_location = CountryCodes[host_suffix]
+    ip_location = COUNTRY_CODES[host_suffix]
     return ip_location
 
 def get_dataset_from_path():
@@ -56,11 +56,11 @@ def get_dataset_from_path():
 def raw_dict_line_to_processed_line():
 
     processed_log_fields = ProcessedLogFields(
-        date = 
-        ip_address =
-        download_bytes = 
-        dataset = 
-        ip_location =  
+        date = ...,  
+        ip_address = ..., 
+        download_bytes = ..., 
+        dataset = ..., 
+        ip_location = ...,  
     )
 
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
