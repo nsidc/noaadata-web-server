@@ -8,11 +8,12 @@ sys.path.append(str(PROJECT_DIR))
 
 from noaa_metrics.constants.paths import PACKAGE_DIR, PROJECT_DIR
 
-@task(aliases=('mypy',))
+
+@task(aliases=("mypy",))
 def typecheck(ctx):
     """Check for type correctness using mypy."""
     print_and_run(f"mypy --config-file={PROJECT_DIR / '.mypy.ini'} {PACKAGE_DIR}/")
-    print('🎉🦆 Type checking passed.')
+    print("🎉🦆 Type checking passed.")
 
 
 @task(
