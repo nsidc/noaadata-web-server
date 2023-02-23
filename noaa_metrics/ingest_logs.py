@@ -1,11 +1,11 @@
 from pathlib import Path
+from socket import gethostbyaddr
 import datetime as dt
 
 from country_codes import CountryCodes
 from misc import RawLogFields, ProcessedLogFields
 
 
-# Create a TypedDict with the fields we will use in our script
 def get_log_lines() -> list[str]:
     """Get log entries as a list of strings.
     
@@ -19,12 +19,15 @@ def get_log_lines() -> list[str]:
     return log_lines
 
 def date_from_split_line(split_line: list[str]) -> dt.date:
+    """Convert the date from the log format '[17/Feb/2023:08:49:35' 
+    to date object with just Year, month, day."""
     datetime_string = split_line[0].strip('[')
     date_string = datetime_string.split(':')[0]
     date = dt.datetime.strptime(date_string, '%d/%b/%Y').date()
     return date
 
 def line_to_raw_fields(log_line: str) -> RawLogFields: 
+    """"Place the necessary info from the line into the dataclass."""
     split_line = log_line.split()
     log_fields = RawLogFields(
         date = date_from_split_line(split_line),
@@ -39,9 +42,29 @@ def lines_to_raw_fields(log_lines: list[str]) -> list[RawLogFields]:
     log_dicts_raw = [line_to_raw_fields(log_line) for log_line in log_lines]
     return log_dicts_raw
 
+def ip_address_to_ip_location(log_dict_raw) -> str:
+    ip = log_dict_raw.ip_address
+    hostname = gethostbyaddr(ip)[0]
+    host_suffix = hostname.split('.')[-1]
+    ip_location = CountryCodes[host_suffix]
+    return ip_location
+
+def get_dataset_from_path():
+    ...
+
+
+def raw_dict_line_to_processed_line():
+
+    processed_log_fields = ProcessedLogFields(
+        date = 
+        ip_address =
+        download_bytes = 
+        dataset = 
+        ip_location =  
+    )
+
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
     """Enrich raw log data to include relevant information."""
-    ...
 
 def write_log_dicts_to_file(log_dicts: list[ProcessedLogFields]) -> None:
     """Create monthly log processed data file."""
