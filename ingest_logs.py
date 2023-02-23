@@ -19,12 +19,15 @@ def get_log_lines() -> list[str]:
     return log_lines
 
 def date_from_split_line(split_line: list[str]) -> dt.date:
+    """Convert the date from the log format '[17/Feb/2023:08:49:35' 
+    to date object with just Year, month, day."""
     datetime_string = split_line[0].strip('[')
     date_string = datetime_string.split(':')[0]
     date = dt.datetime.strptime(date_string, '%d/%b/%Y').date()
     return date
 
 def line_to_raw_fields(log_line: str) -> RawLogFields: 
+    """"Place the necessary info from the line into the dataclass."""
     split_line = log_line.split()
     log_fields = RawLogFields(
         date = date_from_split_line(split_line),
@@ -38,6 +41,10 @@ def lines_to_raw_fields(log_lines: list[str]) -> list[RawLogFields]:
     """Convert log lines into self describing data structures."""
     log_dicts_raw = [line_to_raw_fields(log_line) for log_line in log_lines]
     return log_dicts_raw
+
+def ip_address_to_ip_location():
+    ...
+
 
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
     """Enrich raw log data to include relevant information."""

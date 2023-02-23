@@ -6,7 +6,7 @@ use strict;
 use Data::Dumper;
 
 #Read in the first ten lines of the file
-my @list_from_file = ` cat /share/logs/noaa-web/download.log`;
+my @list_from_file = ` cat /share/logs/noaa-web-all/integration/download.log`;
 
 my @datasets = ('G02135', 'nsidc-0008', 'nsidc-0057', 'G00788', 'G00799');
 my %dataset_sizes;
