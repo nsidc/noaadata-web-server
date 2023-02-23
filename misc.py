@@ -1,16 +1,18 @@
 import datetime as dt
-from typing import TypedDict
+from dataclasses import dataclass
 
-class RawLogFields(TypedDict):
+@dataclass
+class RawLogFields:
     date: dt.date
     ip_address: str
-    download_size: int
+    download_bytes: int
     file_path: str
 
-class ProcessedLogFields(TypedDict):
+@dataclass
+class ProcessedLogFields:
     date: dt.date
     ip_address: str
-    download_size: int
+    download_bytes: int
     dataset: str
     ip_location: str
 

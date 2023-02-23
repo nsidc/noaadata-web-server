@@ -1,7 +1,7 @@
 from pathlib import Path
 import datetime as dt
 
-# import country_codes
+from country_codes import CountryCodes
 from misc import RawLogFields, ProcessedLogFields
 
 
@@ -18,18 +18,26 @@ def get_log_lines() -> list[str]:
 
     return log_lines
 
+def date_from_split_line(split_line: list[str]) -> dt.date:
+    datetime_string = split_line[0].strip('[')
+    date_string = datetime_string.split(':')[0]
+    date = dt.datetime.strptime(date_string, '%d/%b/%Y').date()
+    return date
+
+def line_to_raw_fields(log_line: str) -> RawLogFields: 
+    split_line = log_line.split()
+    log_fields = RawLogFields(
+        date = date_from_split_line(split_line),
+        ip_address = split_line[3],
+        download_bytes = int(split_line[4]),
+        file_path = split_line[5],
+    )
+    return log_fields
 
 def lines_to_raw_fields(log_lines: list[str]) -> list[RawLogFields]:
     """Convert log lines into self describing data structures."""
-    split_line = log_lines[0].split()
-    date = dt.datetime.strptime(split_line[0].strip('['), '%d/%b/%Y:%H:%M:%S'),
-    RawLogfields: RawLogFields = {
-        date : date,
-        ip_address : split_line[3],
-        download_size : int(split_line[4]),
-        file_path : split_line[4]
-    }
-
+    log_dicts_raw = [line_to_raw_fields(log_line) for log_line in log_lines]
+    return log_dicts_raw
 
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
     """Enrich raw log data to include relevant information."""
