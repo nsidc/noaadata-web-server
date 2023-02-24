@@ -47,6 +47,9 @@ def lines_to_raw_fields(log_lines: list[str]) -> list[RawLogFields]:
 
 
 def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
+    """Take the ip address and use the country codes dictionary
+    to match with the country/domain location"""
+    # NOTE: this is failing for '98.50.108.104' which has unfound address
     ip = log_fields_raw.ip_address
     hostname = gethostbyaddr(ip)[0]
     host_suffix = hostname.split(".")[-1]
@@ -54,8 +57,9 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
     return ip_location
 
 
-def get_dataset_from_path():
+def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
     ...
+    return "none"
 
 
 def raw_fields_to_processed_fields(log_fields_raw: RawLogFields) -> ProcessedLogFields:
@@ -64,15 +68,20 @@ def raw_fields_to_processed_fields(log_fields_raw: RawLogFields) -> ProcessedLog
         date=log_fields_raw.date,
         ip_address=log_fields_raw.ip_address,
         download_bytes=log_fields_raw.download_bytes,
-        dataset='...',
+        dataset="...",
         ip_location=ip_address_to_ip_location(log_fields_raw),
     )
     return processed_log_fields
 
+
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
     """Enrich raw log data to include relevant information."""
-    log_dicts = [raw_fields_to_processed_fields(log_fields_raw) for log_fields_raw in log_dicts_raw]
+    log_dicts = [
+        raw_fields_to_processed_fields(log_fields_raw)
+        for log_fields_raw in log_dicts_raw
+    ]
     return log_dicts
+
 
 def write_log_dicts_to_file(log_dicts: list[ProcessedLogFields]) -> None:
     """Create monthly log processed data file."""
