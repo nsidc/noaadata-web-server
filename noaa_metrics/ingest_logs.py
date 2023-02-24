@@ -51,15 +51,30 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
     to match with the country/domain location"""
     # NOTE: this is failing for '98.50.108.104' which has unfound address
     ip = log_fields_raw.ip_address
-    hostname = gethostbyaddr(ip)[0]
-    host_suffix = hostname.split(".")[-1]
-    ip_location = COUNTRY_CODES[host_suffix]
+    if ip == "98.50.108.104":
+        ip_location = COUNTRY_CODES[""]
+    elif ip == "98.38.69.209":
+        ip_location = COUNTRY_CODES[""]
+    else:
+        hostname = gethostbyaddr(ip)[0]
+        host_suffix = hostname.split(".")[-1]
+        ip_location = COUNTRY_CODES[host_suffix]
     return ip_location
 
 
 def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
-    ...
-    return "none"
+    # TODO: figure out why there are paths that aren't true downloads.
+    path = log_fields_raw.file_path
+    if "NOAA" in path:
+        noaa_dataset = path.split("NOAA/")[1]
+        dataset = noaa_dataset.split("/")[0]
+    elif "nsidc-0057" in path:
+        dataset = "nsidc-0057"
+    elif "nsidc-0008" in path:
+        dataset = "nsidc-0008"
+    else:
+        dataset = ""
+    return dataset
 
 
 def raw_fields_to_processed_fields(log_fields_raw: RawLogFields) -> ProcessedLogFields:
@@ -68,7 +83,8 @@ def raw_fields_to_processed_fields(log_fields_raw: RawLogFields) -> ProcessedLog
         date=log_fields_raw.date,
         ip_address=log_fields_raw.ip_address,
         download_bytes=log_fields_raw.download_bytes,
-        dataset="...",
+        dataset=get_dataset_from_path(log_fields_raw),
+        file_path=log_fields_raw.file_path,
         ip_location=ip_address_to_ip_location(log_fields_raw),
     )
     return processed_log_fields
@@ -94,8 +110,8 @@ def main():
     ...
     log_lines = get_log_lines()
     log_dicts_raw = lines_to_raw_fields(log_lines)
-    breakpoint()
     log_dicts = process_raw_fields(log_dicts_raw)
+    breakpoint()
     write_log_dicts_to_file(log_dicts)
 
 

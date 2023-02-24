@@ -16,4 +16,5 @@ class ProcessedLogFields:
     ip_address: str
     download_bytes: int
     dataset: str
+    file_path: str
     ip_location: str
