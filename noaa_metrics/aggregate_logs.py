@@ -1,5 +1,5 @@
 import pandas as pd
-from misc import ProcessedLogFields
+from noaa_metrics.misc import ProcessedLogFields
 
 
 def downloads_by_dataset(log_df: pd.DataFrame) -> pd.DataFrame:
@@ -25,6 +25,11 @@ def downloads_by_tld(log_df: pd.DataFrame) -> pd.DataFrame:
     """
     ...
 
+def dataframe_as_text(by_dataset_df):
+    ...
+
+def email_full_report(full_report):
+    ...
 
 def main():
     log_df = ...

@@ -2,8 +2,8 @@ import datetime as dt
 from pathlib import Path
 from socket import gethostbyaddr
 
-from constants.country_codes import COUNTRY_CODES
-from misc import ProcessedLogFields, RawLogFields
+from noaa_metrics.constants.country_codes import COUNTRY_CODES
+from noaa_metrics.misc import ProcessedLogFields, RawLogFields
 
 
 def get_log_lines() -> list[str]:
@@ -46,8 +46,8 @@ def lines_to_raw_fields(log_lines: list[str]) -> list[RawLogFields]:
     return log_dicts_raw
 
 
-def ip_address_to_ip_location(log_dict_raw) -> str:
-    ip = log_dict_raw.ip_address
+def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
+    ip = log_fields_raw.ip_address
     hostname = gethostbyaddr(ip)[0]
     host_suffix = hostname.split(".")[-1]
     ip_location = COUNTRY_CODES[host_suffix]
@@ -58,20 +58,21 @@ def get_dataset_from_path():
     ...
 
 
-def raw_dict_line_to_processed_line():
+def raw_fields_to_processed_fields(log_fields_raw: RawLogFields) -> ProcessedLogFields:
 
     processed_log_fields = ProcessedLogFields(
-        date=...,
-        ip_address=...,
-        download_bytes=...,
-        dataset=...,
-        ip_location=...,
+        date=log_fields_raw.date,
+        ip_address=log_fields_raw.ip_address,
+        download_bytes=log_fields_raw.download_bytes,
+        dataset='...',
+        ip_location=ip_address_to_ip_location(log_fields_raw),
     )
-
+    return processed_log_fields
 
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
     """Enrich raw log data to include relevant information."""
-
+    log_dicts = [raw_fields_to_processed_fields(log_fields_raw) for log_fields_raw in log_dicts_raw]
+    return log_dicts
 
 def write_log_dicts_to_file(log_dicts: list[ProcessedLogFields]) -> None:
     """Create monthly log processed data file."""
