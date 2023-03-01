@@ -2,6 +2,12 @@ import pandas as pd
 
 from noaa_metrics.misc import ProcessedLogFields
 
+def ingest_and_decode_json_file(JSON_OUTPUT_FILEPATH) -> str:
+
+
+def create_dataframe(log_json: str) -> pd.DataFrame:
+    """Create dataframe from JSON file."""
+
 
 def downloads_by_dataset(log_df: pd.DataFrame) -> pd.DataFrame:
     """Group log_df by dataset.

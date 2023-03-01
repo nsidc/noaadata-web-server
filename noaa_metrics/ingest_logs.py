@@ -53,6 +53,7 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
     """Take the ip address and use the country codes dictionary
     to match with the country/domain location"""
     # NOTE: this is failing for '98.50.108.104' which has unfound address
+    # TODO: Put in a try/catch method to deal with the errors when an IP is bad
     ip = log_fields_raw.ip_address
     if ip == "98.50.108.104":
         ip_location = COUNTRY_CODES[""]
@@ -66,7 +67,7 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
 
 
 def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
-    # TODO: figure out why there are paths that aren't true downloads.
+    # TODO: Filter out when downlaods are not a true download
     path = log_fields_raw.file_path
     if "NOAA" in path:
         noaa_dataset = path.split("NOAA/")[1]
