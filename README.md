@@ -10,7 +10,7 @@ PYTHONPATH=. python noaa_metrics/ingest_logs.py
 
 ## Configuring the nginx download log
 
-The nginx download logs are configured in `~/nginx/nginx.conf' and 'nginx/default.conf'.
+The nginx download logs are configured in `nginx/nginx.conf` and `nginx/default.conf`.
 
 Ideally it would be possible to filter with 2 conditions so that the logs contain
 only downloads that have success status (200).
