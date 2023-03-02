@@ -14,7 +14,7 @@ def get_log_lines() -> list[str]:
 
     From /share/logs/noaa-web/download.log.
     """
-    log_file = Path("/share/logs/noaa-web-all/integration/download.log")
+    log_file = Path("/share/logs/noaa-web/download.log")
     log_lines = []
     with open(log_file) as file:
         log_lines = [line.rstrip() for line in file]
@@ -39,6 +39,7 @@ def line_to_raw_fields(log_line: str) -> RawLogFields:
         ip_address=split_line[3],
         download_bytes=int(split_line[4]),
         file_path=split_line[5],
+        status=split_line[6],
     )
     return log_fields
 
@@ -99,6 +100,7 @@ def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFi
     log_dc = [
         raw_fields_to_processed_fields(log_fields_raw)
         for log_fields_raw in log_dicts_raw
+        if log_fields_raw.status.startswith("2")
     ]
     return log_dc
 
