@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 from dataclasses import dataclass
 
 
@@ -18,3 +19,16 @@ class ProcessedLogFields:
     dataset: str
     file_path: str
     ip_location: str
+
+
+@dataclass
+class YearMonth:
+    month: int
+    year: int
+
+
+class DateFriendlyJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, dt.date):
+            return obj.isoformat()
+        return super(DateFriendlyJSONEncoder, self).default(obj)

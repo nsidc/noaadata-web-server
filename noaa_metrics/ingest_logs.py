@@ -1,9 +1,12 @@
 import datetime as dt
+import json
+from dataclasses import asdict
 from pathlib import Path
 from socket import gethostbyaddr
 
 from noaa_metrics.constants.country_codes import COUNTRY_CODES
-from noaa_metrics.misc import ProcessedLogFields, RawLogFields
+from noaa_metrics.constants.paths import JSON_OUTPUT_FILEPATH
+from noaa_metrics.misc import DateFriendlyJSONEncoder, ProcessedLogFields, RawLogFields
 
 
 def get_log_lines() -> list[str]:
@@ -50,6 +53,7 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
     """Take the ip address and use the country codes dictionary
     to match with the country/domain location"""
     # NOTE: this is failing for '98.50.108.104' which has unfound address
+    # TODO: Put in a try/catch method to deal with the errors when an IP is bad
     ip = log_fields_raw.ip_address
     if ip == "98.50.108.104":
         ip_location = COUNTRY_CODES[""]
@@ -63,7 +67,7 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
 
 
 def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
-    # TODO: figure out why there are paths that aren't true downloads.
+    # TODO: Filter out when downlaods are not a true download
     path = log_fields_raw.file_path
     if "NOAA" in path:
         noaa_dataset = path.split("NOAA/")[1]
@@ -92,17 +96,24 @@ def raw_fields_to_processed_fields(log_fields_raw: RawLogFields) -> ProcessedLog
 
 def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFields]:
     """Enrich raw log data to include relevant information."""
-    log_dicts = [
+    log_dc = [
         raw_fields_to_processed_fields(log_fields_raw)
         for log_fields_raw in log_dicts_raw
     ]
-    return log_dicts
+    return log_dc
 
 
-def write_log_dicts_to_file(log_dicts: list[ProcessedLogFields]) -> None:
+def log_dc_to_json(log_dc: list[ProcessedLogFields]) -> str:
     """Create monthly log processed data file."""
     # TODO: This should take a month.
-    ...
+    log_dicts = [asdict(l) for l in log_dc]
+    log_json = json.dumps(log_dicts, cls=DateFriendlyJSONEncoder)
+    return log_json
+
+
+def write_json_to_file(log_json: str) -> None:
+    with open(JSON_OUTPUT_FILEPATH, "w") as f:
+        f.write(log_json)
 
 
 # Read in the log file
@@ -110,9 +121,9 @@ def main():
     ...
     log_lines = get_log_lines()
     log_dicts_raw = lines_to_raw_fields(log_lines)
-    log_dicts = process_raw_fields(log_dicts_raw)
-    breakpoint()
-    write_log_dicts_to_file(log_dicts)
+    log_dc = process_raw_fields(log_dicts_raw)
+    log_json = log_dc_to_json(log_dc)
+    write_json_to_file(log_json)
 
 
 if __name__ == "__main__":
