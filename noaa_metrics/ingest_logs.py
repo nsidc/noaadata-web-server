@@ -100,6 +100,7 @@ def process_raw_fields(log_dicts_raw: list[RawLogFields]) -> list[ProcessedLogFi
     log_dc = [
         raw_fields_to_processed_fields(log_fields_raw)
         for log_fields_raw in log_dicts_raw
+        if log_fields_raw.status.startswith("2")
     ]
     return log_dc
 
@@ -123,7 +124,6 @@ def main():
     log_lines = get_log_lines()
     log_dicts_raw = lines_to_raw_fields(log_lines)
     log_dc = process_raw_fields(log_dicts_raw)
-    breakpoint()
     log_json = log_dc_to_json(log_dc)
     write_json_to_file(log_json)
 

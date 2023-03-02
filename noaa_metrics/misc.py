@@ -9,7 +9,7 @@ class RawLogFields:
     ip_address: str
     download_bytes: int
     file_path: str
-    status: int
+    status: str
 
 
 @dataclass
