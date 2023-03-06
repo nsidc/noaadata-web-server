@@ -2,6 +2,7 @@ import datetime as dt
 import json
 from dataclasses import asdict
 from pathlib import Path
+import socket
 from socket import gethostbyaddr
 
 from noaa_metrics.constants.country_codes import COUNTRY_CODES
@@ -14,7 +15,7 @@ def get_log_lines() -> list[str]:
 
     From /share/logs/noaa-web/download.log.
     """
-    log_file = Path("/share/logs/noaa-web/download.log")
+    log_file = Path("/share/logs/noaa-web-all/integration/download.log")
     log_lines = []
     with open(log_file) as file:
         log_lines = [line.rstrip() for line in file]
@@ -56,19 +57,16 @@ def ip_address_to_ip_location(log_fields_raw: RawLogFields) -> str:
     # NOTE: this is failing for '98.50.108.104' which has unfound address
     # TODO: Put in a try/catch method to deal with the errors when an IP is bad
     ip = log_fields_raw.ip_address
-    if ip == "98.50.108.104":
-        ip_location = COUNTRY_CODES[""]
-    elif ip == "98.38.69.209":
-        ip_location = COUNTRY_CODES[""]
-    else:
+    try:
         hostname = gethostbyaddr(ip)[0]
         host_suffix = hostname.split(".")[-1]
         ip_location = COUNTRY_CODES[host_suffix]
+    except socket.herror:
+        ip_location = COUNTRY_CODES[""]
     return ip_location
 
 
 def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
-    # TODO: Filter out when downlaods are not a true download
     path = log_fields_raw.file_path
     if "NOAA" in path:
         noaa_dataset = path.split("NOAA/")[1]
@@ -77,8 +75,6 @@ def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
         dataset = "nsidc-0057"
     elif "nsidc-0008" in path:
         dataset = "nsidc-0008"
-    else:
-        dataset = ""
     return dataset
 
 
