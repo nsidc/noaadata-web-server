@@ -160,7 +160,7 @@ COUNTRY_CODES = {
     "na": "Namibia",
     "nc": "New Caledonia",
     "ne": "Niger",
-    "net": "US network",
+    "net": "US Network",
     "nf": "Norfolk Island",
     "ng": "Nigeria",
     "ni": "Nicaragua",
