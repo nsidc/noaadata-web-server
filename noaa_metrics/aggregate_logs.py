@@ -27,6 +27,7 @@ def downloads_by_day(log_df: pd.DataFrame) -> pd.DataFrame:
 
     Counting distinct users, summing total volume, couting number of files.
     """
+    log_df['date'] = log_df['date'].dt.strftime("%d %b %Y")
     by_day_df = log_df.groupby('date').agg(
         {'ip_address': ['nunique'], 'file_path': ['count'], 'download_bytes': ['sum']})
     by_day_df.columns.set_levels(['Unique Users', 'Files Sent','Download Volume (MB)'], level=1,inplace=True)
