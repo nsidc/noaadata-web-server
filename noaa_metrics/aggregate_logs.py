@@ -1,15 +1,13 @@
 import pandas as pd
 
+from noaa_metrics.constants.paths import JSON_OUTPUT_FILEPATH
 from noaa_metrics.misc import ProcessedLogFields
 
 
-def ingest_and_decode_json_file(JSON_OUTPUT_FILEPATH) -> str:
-    return ""
-
-
-def create_dataframe(log_json: str) -> pd.DataFrame:
+def create_dataframe(JSON_OUTPUT_FILEPATH) -> pd.DataFrame:
     """Create dataframe from JSON file."""
-    ...
+    log_df = pd.read_json(JSON_OUTPUT_FILEPATH)
+    return log_df
 
 
 def downloads_by_dataset(log_df: pd.DataFrame) -> pd.DataFrame:
@@ -17,7 +15,8 @@ def downloads_by_dataset(log_df: pd.DataFrame) -> pd.DataFrame:
 
     Counting distinct users, summing total volume, couting number of files.
     """
-    ...
+    by_dataset_df = ...
+    return by_dataset_df
 
 
 def downloads_by_day(log_df: pd.DataFrame) -> pd.DataFrame:
@@ -45,7 +44,9 @@ def email_full_report(full_report):
 
 
 def main():
-    log_df = ...
+
+    log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
+    breakpoint()
 
     by_dataset_df = downloads_by_dataset(log_df)
     by_day_df = downloads_by_day(log_df)
