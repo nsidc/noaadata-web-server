@@ -1,8 +1,8 @@
 import datetime as dt
 import json
+import socket
 from dataclasses import asdict
 from pathlib import Path
-import socket
 from socket import gethostbyaddr
 
 from noaa_metrics.constants.country_codes import COUNTRY_CODES
