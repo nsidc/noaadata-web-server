@@ -1,3 +1,6 @@
+import smtplib
+from email.message import EmailMessage
+
 import pandas as pd
 
 from noaa_metrics.constants.paths import JSON_OUTPUT_FILEPATH, REPORT_OUTPUT_DIR
@@ -74,7 +77,17 @@ def dataframe_as_text(df: pd.DataFrame):
 
 
 def email_full_report(full_report):
-    ...
+    with open(full_report) as fp:
+        msg = EmailMessage()
+        msg.set_content(fp.read())
+
+    msg["From"] = "archive@nusnow.colorado.edu"
+    msg["To"] = "roma8902@colorado.edu"
+    msg["Subject"] = "TEST"
+    # TODO: figure out why this causes an error
+    s = smtplib.SMTP("localhost")
+    s.send_msg(msg)
+    s.quit()
 
 
 def main():
@@ -88,9 +101,10 @@ def main():
     by_dataset_text = dataframe_as_text(by_dataset_df)
     by_day_text = dataframe_as_text(by_day_df)
     by_tld_text = dataframe_as_text(by_location_df)
-    full_report = f"{by_dataset_text}\n\n{by_day_text}\n\n{by_tld_text}"
+    # full_report = f"{by_dataset_text}\n\n{by_day_text}\n\n{by_tld_text}"
+    email_full_report("/tmp/df.txt")
     breakpoint()
-    email_full_report(full_report)
+    ...
 
 
 if __name__ == "__main__":
