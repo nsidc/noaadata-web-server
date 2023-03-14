@@ -71,9 +71,10 @@ def downloads_by_tld(log_df: pd.DataFrame) -> pd.DataFrame:
     return by_location_df
 
 
-# TODO: figure out how to format the template.
-def dataframe_as_text(df: pd.DataFrame):
-    df.to_csv(REPORT_OUTPUT_DIR / "test.txt")
+def df_to_csv(df: pd.DataFrame, header: str):
+    with open("/tmp/march_2023.csv", "a") as file:
+        file.write(header)
+        df.to_csv(file, header=True, index=True)
 
 
 def email_full_report(full_report):
@@ -86,7 +87,7 @@ def email_full_report(full_report):
     msg["Subject"] = "TEST"
     # TODO: figure out why this causes an error
     s = smtplib.SMTP("localhost")
-    s.send_msg(msg)
+    s.send_message(msg)
     s.quit()
 
 
@@ -98,10 +99,11 @@ def main():
     by_day_df = downloads_by_day(log_df)
     by_location_df = downloads_by_tld(log_df)
 
-    by_dataset_text = dataframe_as_text(by_dataset_df)
-    by_day_text = dataframe_as_text(by_day_df)
-    by_tld_text = dataframe_as_text(by_location_df)
-    # full_report = f"{by_dataset_text}\n\n{by_day_text}\n\n{by_tld_text}"
+    by_day_csv = df_to_csv(by_day_df, "Transfers by Day\n\n")
+    by_dataset_csv = df_to_csv(by_dataset_df, "\nTransfers by Dataset\n\n")
+    all_csv = df_to_csv(by_location_df, "\nTransfers by Domain\n\n")
+    breakpoint()
+
     email_full_report("/tmp/df.txt")
     breakpoint()
     ...
