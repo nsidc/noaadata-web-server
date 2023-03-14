@@ -72,20 +72,24 @@ def downloads_by_tld(log_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def df_to_csv(df: pd.DataFrame, header: str):
-    with open("/tmp/march_2023.csv", "a") as file:
+    with open("/tmp/noaa-march-2023.csv", "a") as file:
         file.write(header)
         df.to_csv(file, header=True, index=True)
 
 
 def email_full_report(full_report):
-    with open(full_report) as fp:
-        msg = EmailMessage()
-        msg.set_content(fp.read())
-
+    msg = EmailMessage()
     msg["From"] = "archive@nusnow.colorado.edu"
     msg["To"] = "roma8902@colorado.edu"
     msg["Subject"] = "TEST"
-    # TODO: figure out why this causes an error
+
+    with open(full_report) as fp:
+        metrics_data = fp.read()
+    msg.add_attachment(
+        metrics_data, maintype="text", subtype="csv", filename="report.csv"
+    )
+    # add context manager to avoid s.quit()
+    # with smtplib.SMTP as s:
     s = smtplib.SMTP("localhost")
     s.send_message(msg)
     s.quit()
@@ -102,9 +106,8 @@ def main():
     by_day_csv = df_to_csv(by_day_df, "Transfers by Day\n\n")
     by_dataset_csv = df_to_csv(by_dataset_df, "\nTransfers by Dataset\n\n")
     all_csv = df_to_csv(by_location_df, "\nTransfers by Domain\n\n")
-    breakpoint()
 
-    email_full_report("/tmp/df.txt")
+    email_full_report("/tmp/noaa-march-2023.csv")
     breakpoint()
     ...
 
