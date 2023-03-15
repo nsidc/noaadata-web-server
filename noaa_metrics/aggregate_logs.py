@@ -80,19 +80,14 @@ def df_to_csv(df: pd.DataFrame, header: str):
 def email_full_report(full_report):
     msg = EmailMessage()
     msg["From"] = "archive@nusnow.colorado.edu"
-    msg["To"] = "roma8902@colorado.edu"
-    msg["Subject"] = "TEST"
+    msg["To"] = "roma8902@colorado.edu"  # "ann.windnagel@colorado.edu"
+    msg["Subject"] = "NOAA Downloads March 2023"
 
     with open(full_report) as fp:
         metrics_data = fp.read()
-    msg.add_attachment(
-        metrics_data, maintype="text", subtype="csv", filename="report.csv"
-    )
-    # add context manager to avoid s.quit()
-    # with smtplib.SMTP as s:
-    s = smtplib.SMTP("localhost")
-    s.send_message(msg)
-    s.quit()
+    msg.add_attachment(metrics_data, filename="noaa-march-2023.csv")
+    with smtplib.SMTP("localhost") as s:
+        s.send_message(msg)
 
 
 def main():
@@ -108,7 +103,6 @@ def main():
     all_csv = df_to_csv(by_location_df, "\nTransfers by Domain\n\n")
 
     email_full_report("/tmp/noaa-march-2023.csv")
-    breakpoint()
     ...
 
 
