@@ -11,6 +11,5 @@ dependencies:
   - black ~=22.3.0
   - isort ~=5.10
 
-  # TODO: Eventually will want click to run metrics
   # Runtime dependencies:
-  #- click ~=8.1
+  - click ~=8.1
