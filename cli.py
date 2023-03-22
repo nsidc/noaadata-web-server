@@ -1,13 +1,9 @@
 import datetime as dt
 
 import click
-import luigi
 
-from nsidc0102 import regions
-from nsidc0102.luigitasks.clean import CleanOutput, CleanSource, CleanStaged
-from nsidc0102.luigitasks.main import ProcessDateRange
+# from nsidc0102.luigitasks.main import ProcessDateRange
 
-region_choices = ['all'] + sorted(set(regions.load().shortname))
 
 
 class DateType(click.ParamType):
@@ -15,9 +11,9 @@ class DateType(click.ParamType):
 
     def convert(self, value, param, ctx):
         try:
-            return dt.datetime.strptime(value, '%Y-%m-%d').date()
+            return dt.datetime.strptime(value, '%Y-%m').date()
         except ValueError:
-            self.fail(f'{value} is not a valid %Y-%m-%d date')
+            self.fail(f'{value} is not a valid %Y-%m date')
 
 
 @click.group()
@@ -26,38 +22,30 @@ def cli():
 
 
 @cli.command(
-    short_help='Create images from MODIS source data',
-)
-@click.option(
-    '-w',
-    '--workers',
-    help='Number of Luigi workers to use',
-    type=int,
-    default=1,
-    show_default=True,
+    short_help='Generate NOAA downlaods metric report.',
 )
 @click.option(
     '-s',
     '--start-date',
-    help='Start date (YYYY-MM-DD)',
+    help='Start date (YYYY-MM)',
     type=DateType(),
 )
 @click.option(
     '-e',
     '--end-date',
-    help='End date (YYYY-MM-DD)',
+    help='End date (YYYY-MM)',
     type=DateType(),
 )
 @click.option(
-    '-r',
-    '--region',
-    help='Region to process',
+    '-m',
+    '--mail-to',
+    help='',
     type=click.Choice(region_choices),
     default='all',
     show_default=True,
 )
-def process(workers, start_date, end_date, region):
-    """Create images from MODIS source data."""
+def process(start_date, end_date, mail-to):
+    """Generate NOAA downlaods metric report."""
     luigi.build(
         [
             ProcessDateRange(
@@ -68,60 +56,6 @@ def process(workers, start_date, end_date, region):
         ],
         workers=workers,
     )
-
-
-@cli.command(
-    short_help='Clean up working directories',
-)
-@click.option(
-    '-w',
-    '--workers',
-    help='Number of Luigi workers to use',
-    type=int,
-    default=1,
-    show_default=True,
-)
-@click.option(
-    '-s',
-    '--start-date',
-    help='Start date (YYYY-MM-DD)',
-    type=DateType(),
-)
-@click.option(
-    '-e',
-    '--end-date',
-    help='End date (YYYY-MM-DD)',
-    type=DateType(),
-)
-@click.option(
-    '-i',
-    '--source',
-    is_flag=True,
-    help='Clean input MODIS data',
-)
-@click.option(
-    '-o',
-    '--output',
-    is_flag=True,
-    help='Clean output images',
-)
-@click.option(
-    '-d',
-    '--staged',
-    is_flag=True,
-    help='Clean output images',
-)
-def clean(workers, start_date, end_date, source, output, staged):
-    """Clean up working directories."""
-    tasks = []
-    if source:
-        tasks.append(CleanSource())
-    if output:
-        tasks.append(CleanOutput(start_date, end_date))
-    if staged:
-        tasks.append(CleanStaged(start_date, end_date))
-
-    luigi.build(tasks, workers=workers)
 
 
 if __name__ == '__main__':
