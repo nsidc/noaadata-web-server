@@ -2,18 +2,30 @@ import datetime as dt
 
 import click
 
-# from nsidc0102.luigitasks.main import ProcessDateRange
-
-
-
 class DateType(click.ParamType):
     name = 'date'
 
+    def __init__(self, formats=None):
+        self.formats = formats or [
+            '%Y-%m-%d',
+            '%Y%m%d',
+        ]
+
+    def __repr__(self):
+        return 'Date'
+
+    def get_metavar(self, param):
+        formats_str = "|".join(self.formats)
+        return f'[{formats_str}]'
+
     def convert(self, value, param, ctx):
-        try:
-            return dt.datetime.strptime(value, '%Y-%m').date()
-        except ValueError:
-            self.fail(f'{value} is not a valid %Y-%m date')
+        for fmt in self.formats:
+            try:
+                return dt.datetime.strptime(value, fmt).date()
+            except ValueError:
+                continue
+
+        self.fail(f'{value} is not a valid date. Expected one of: {self.formats}')
 
 
 @click.group()
@@ -46,16 +58,6 @@ def cli():
 )
 def process(start_date, end_date, mail-to):
     """Generate NOAA downlaods metric report."""
-    luigi.build(
-        [
-            ProcessDateRange(
-                start_date=start_date,
-                end_date=end_date,
-                region=region,
-            )
-        ],
-        workers=workers,
-    )
 
 
 if __name__ == '__main__':

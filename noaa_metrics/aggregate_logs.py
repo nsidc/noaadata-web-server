@@ -1,3 +1,5 @@
+import datetime as dt
+import calendar
 import smtplib
 from email.message import EmailMessage
 
@@ -13,9 +15,13 @@ from noaa_metrics.misc import ProcessedLogFields
 
 def create_dataframe(JSON_OUTPUT_FILEPATH) -> pd.DataFrame:
     """Create dataframe from JSON file."""
-    log_df = pd.read_json(JSON_OUTPUT_FILEPATH)
-    return log_df
+    all_log_df = pd.read_json(JSON_OUTPUT_FILEPATH)
+    return all_log_df
 
+def select_within_date_range(all_log_df: pd.DataFrame, start_date: dt.date, end_date: dt.date):
+    """ Reduce the dataframe to just the dates needed."""
+    log_df = all_log_df.loc[all_log_df['date'].between(start_date, end_date)]
+    return log_df
 
 def get_period_summary_stats(log_df: pd.DataFrame):
     """Collect stats for entire period."""
@@ -94,10 +100,21 @@ def df_to_csv(df: pd.DataFrame, header: str, output_csv):
         df.to_csv(file, header=True, index=True)
 
 
-def email_full_report(full_report, filename: str, subject: str):
+def email_full_report(full_report, start_date, end_date, mailto: str):
+    start_date = dt.datetime.strptime(start_date, "%Y-%m-%d")
+    year = start_date.year
+    start_month = calendar.month_name[(start_date.month)]
+    end_date = dt.datetime.strptime(end_date, "%Y-%m-%d")
+    end_month = calendar.month_name[(end_date.month)]
+    if start_month == end_month:
+        subject = f'NOAA Downloads {start_month} {year}'
+        filename = f'NOAA-{start_month}-{year}.csv'
+    else:
+        subject = f'NOAA Downloads {start_month} - {end_month} {year}'
+        filename = f'NOAA-{start_month}-{end_month}-{year}.csv'
     msg = EmailMessage()
     msg["From"] = "archive@nusnow.colorado.edu"
-    msg["To"] = "roma8902@colorado.edu"  # , "ann.windnagel@colorado.edu"
+    msg["To"] = mailto 
     msg["Subject"] = subject
 
     with open(full_report) as fp:
@@ -109,15 +126,15 @@ def email_full_report(full_report, filename: str, subject: str):
 
 def main():
 
-    log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
+    all_log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
+    log_df = select_within_date_range(all_log_df, "2023-02-01", "2023-03-05")
     summary_df = get_period_summary_stats(log_df)
     by_dataset_df = downloads_by_dataset(log_df)
-    breakpoint()
     by_day_df = downloads_by_day(log_df)
     by_location_df = downloads_by_tld(log_df)
 
     summary_csv = df_to_csv(
-        summary_df, "NOAA Requests for March 2024\n\n", REPORT_OUTPUT_FILEPATH
+        summary_df, "NOAA Requests for Entire Period\n\n", REPORT_OUTPUT_FILEPATH
     )
     by_day_csv = df_to_csv(by_day_df, "\nTransfers by Day\n\n", REPORT_OUTPUT_FILEPATH)
     by_dataset_csv = df_to_csv(
@@ -128,7 +145,7 @@ def main():
     )
 
     email_full_report(
-        "/tmp/noaa-march-2023.csv", "noaa-march-2023.csv", "NOAA Downloads March 2023"
+        REPORT_OUTPUT_FILEPATH, "2023-02-01", "2023-03-05", ("roma8902@colorado.edu", "ann.windnagel@colorado.edu") 
     )
     ...
 
