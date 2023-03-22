@@ -3,7 +3,11 @@ from email.message import EmailMessage
 
 import pandas as pd
 
-from noaa_metrics.constants.paths import JSON_OUTPUT_FILEPATH, REPORT_OUTPUT_DIR, REPORT_OUTPUT_FILEPATH
+from noaa_metrics.constants.paths import (
+    JSON_OUTPUT_FILEPATH,
+    REPORT_OUTPUT_DIR,
+    REPORT_OUTPUT_FILEPATH,
+)
 from noaa_metrics.misc import ProcessedLogFields
 
 
@@ -26,8 +30,8 @@ def get_period_summary_stats(log_df: pd.DataFrame):
         "Volume in MB of files Transmitted During Summary Period": total_download_bytes,
         "Users Connecting During Summary Period": unique_users,
     }
-    summary_df1 = pd.DataFrame.from_dict(summary, orient='index')
-    summary_df = summary_df1.rename(columns={0:'Values'})
+    summary_df1 = pd.DataFrame.from_dict(summary, orient="index")
+    summary_df = summary_df1.rename(columns={0: "Values"})
     return summary_df
 
 
@@ -93,8 +97,8 @@ def df_to_csv(df: pd.DataFrame, header: str, output_csv):
 def email_full_report(full_report, filename: str, subject: str):
     msg = EmailMessage()
     msg["From"] = "archive@nusnow.colorado.edu"
-    msg["To"] = "roma8902@colorado.edu", "ann.windnagel@colorado.edu"
-    msg["Subject"] = subject 
+    msg["To"] = "roma8902@colorado.edu"  # , "ann.windnagel@colorado.edu"
+    msg["Subject"] = subject
 
     with open(full_report) as fp:
         metrics_data = fp.read()
@@ -106,18 +110,26 @@ def email_full_report(full_report, filename: str, subject: str):
 def main():
 
     log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
-    breakpoint()
     summary_df = get_period_summary_stats(log_df)
     by_dataset_df = downloads_by_dataset(log_df)
+    breakpoint()
     by_day_df = downloads_by_day(log_df)
     by_location_df = downloads_by_tld(log_df)
 
-    summary_csv = df_to_csv(summary_df, 'NOAA Requests for March 2024\n\n', REPORT_OUTPUT_FILEPATH)
+    summary_csv = df_to_csv(
+        summary_df, "NOAA Requests for March 2024\n\n", REPORT_OUTPUT_FILEPATH
+    )
     by_day_csv = df_to_csv(by_day_df, "\nTransfers by Day\n\n", REPORT_OUTPUT_FILEPATH)
-    by_dataset_csv = df_to_csv(by_dataset_df, "\nTransfers by Dataset\n\n", REPORT_OUTPUT_FILEPATH)
-    all_csv = df_to_csv(by_location_df, "\nTransfers by Domain\n\n", REPORT_OUTPUT_FILEPATH)
+    by_dataset_csv = df_to_csv(
+        by_dataset_df, "\nTransfers by Dataset\n\n", REPORT_OUTPUT_FILEPATH
+    )
+    all_csv = df_to_csv(
+        by_location_df, "\nTransfers by Domain\n\n", REPORT_OUTPUT_FILEPATH
+    )
 
-    email_full_report("/tmp/noaa-march-2023.csv", "noaa-march-2023.csv", "NOAA Downloads March 2023")
+    email_full_report(
+        "/tmp/noaa-march-2023.csv", "noaa-march-2023.csv", "NOAA Downloads March 2023"
+    )
     ...
 
 
