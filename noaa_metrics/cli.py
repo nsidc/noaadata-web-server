@@ -52,6 +52,7 @@ def cli():
     '-m',
     '--mailto',
     help='Email(s) to send report to.',
+    multiple=True
 )
 def process(start_date, end_date, mailto):
     """Generate NOAA downlaods metric report."""
