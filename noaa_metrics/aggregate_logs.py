@@ -19,9 +19,6 @@ def create_dataframe(JSON_OUTPUT_FILEPATH) -> pd.DataFrame:
 
 def select_within_date_range(all_log_df: pd.DataFrame, start_date, end_date):
     """ Reduce the dataframe to just the dates needed."""
-    breakpoint()
-    start_date = dt.datetime.strptime(start_date, "%Y-%m-%d")
-    end_date = dt.datetime(end_date)
     log_df = all_log_df.loc[all_log_df['date'].between(start_date, end_date)]
     return log_df
 
@@ -102,12 +99,17 @@ def df_to_csv(df: pd.DataFrame, header: str, output_csv):
         df.to_csv(file, header=True, index=True)
 
 
-def email_full_report(full_report, start_date, end_date, mailto: str):
-    start_date = dt.datetime.strptime(start_date, "%Y-%m-%d")
-    year = start_date.year
-    start_month = calendar.month_name[(start_date.month)]
-    end_date = dt.datetime.strptime(end_date, "%Y-%m-%d")
-    end_month = calendar.month_name[(end_date.month)]
+def get_month(date: str) -> str:
+    date = dt.datetime.strptime(date, "%Y-%m-%d")
+    month = calendar.month_name[(date.month)]
+    return month
+
+def get_year(date:str):
+    date = dt.datetime.strptime(date, "%Y-%m-%d")
+    year = date.year
+    return year
+
+def email_full_report(full_report, year, start_month, end_month, mailto: str):
     if start_month == end_month:
         subject = f'NOAA Downloads {start_month} {year}'
         filename = f'NOAA-{start_month}-{year}.csv'
@@ -130,14 +132,21 @@ def main(start_date, end_date, mailto):
 
     all_log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
     log_df = select_within_date_range(all_log_df, start_date, end_date)
+    start_month = get_month(start_date)
+    end_month = get_month(end_date)
+    year = get_year(start_date)
     summary_df = get_period_summary_stats(log_df)
     by_dataset_df = downloads_by_dataset(log_df)
     by_day_df = downloads_by_day(log_df)
     by_location_df = downloads_by_tld(log_df)
+    
+    if start_month == end_month:
+        summary_header = f'NOAA Downloads {start_month}\n\n'
+    else:
+        summary_header = f'NOAA Downloads {start_month} - {end_month}\n\n'
 
     summary_csv = df_to_csv(
-        # TODO: Get months in the title here
-        summary_df, "NOAA Requests for Period\n\n", REPORT_OUTPUT_FILEPATH
+        summary_df, summary_header, REPORT_OUTPUT_FILEPATH
     )
     by_day_csv = df_to_csv(by_day_df, "\nTransfers by Day\n\n", REPORT_OUTPUT_FILEPATH)
     by_dataset_csv = df_to_csv(
@@ -148,7 +157,7 @@ def main(start_date, end_date, mailto):
     )
 
     email_full_report(
-        REPORT_OUTPUT_FILEPATH, start_date, end_date, mailto 
+        REPORT_OUTPUT_FILEPATH, year, start_month, end_month, mailto 
     )
 
 
