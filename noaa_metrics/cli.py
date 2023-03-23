@@ -2,21 +2,22 @@ import datetime as dt
 
 import click
 
+
 class DateType(click.ParamType):
-    name = 'date'
+    name = "date"
 
     def __init__(self, formats=None):
         self.formats = formats or [
-            '%Y-%m-%d',
-            '%Y%m%d',
+            "%Y-%m-%d",
+            "%Y%m%d",
         ]
 
     def __repr__(self):
-        return 'Date'
+        return "Date"
 
     def get_metavar(self, param):
         formats_str = "|".join(self.formats)
-        return f'[{formats_str}]'
+        return f"[{formats_str}]"
 
     def convert(self, value, param, ctx):
         for fmt in self.formats:
@@ -25,7 +26,7 @@ class DateType(click.ParamType):
             except ValueError:
                 continue
 
-        self.fail(f'{value} is not a valid date. Expected one of: {self.formats}')
+        self.fail(f"{value} is not a valid date. Expected one of: {self.formats}")
 
 
 @click.group()
@@ -50,11 +51,17 @@ def cli():
     type=DateType(),
 )
 @click.option("-m", "--mailto", help="Email(s) to send report to.", multiple=True)
-def process(start_date, end_date, mailto):
+@click.option(
+    "-d",
+    "--dataset",
+    help="Select a specific dataset or all of them(default).",
+    default="all",
+)
+def process(start_date, end_date, mailto, dataset):
     """Generate NOAA downlaods metric report."""
     from aggregate_logs import main
 
-    main(start_date=start_date, end_date=end_date, mailto=mailto)
+    main(start_date=start_date, end_date=end_date, mailto=mailto, dataset=dataset)
 
 
 if __name__ == "__main__":

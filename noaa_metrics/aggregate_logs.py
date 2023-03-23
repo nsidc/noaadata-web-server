@@ -139,11 +139,15 @@ def email_full_report(full_report, year, start_month, end_month, mailto: str):
         s.send_message(msg)
 
 
-def main(start_date, end_date, mailto):
+def main(start_date, end_date, mailto, dataset):
     start_date_str = start_date.isoformat()
     end_date_str = end_date.isoformat()
     all_log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
     log_df = select_within_date_range(all_log_df, start_date_str, end_date_str)
+
+    if dataset != "all":
+        log_df = filter_to_dataset(log_df, dataset)
+
     start_month = get_month(start_date)
     end_month = get_month(end_date)
     year = get_year(start_date)
