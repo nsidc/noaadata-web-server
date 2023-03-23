@@ -51,7 +51,7 @@ def cli():
 @click.option(
     '-m',
     '--mailto',
-    help='List string of emails to send report to.',
+    help='Email(s) to send report to.',
 )
 def process(start_date, end_date, mailto):
     """Generate NOAA downlaods metric report."""
