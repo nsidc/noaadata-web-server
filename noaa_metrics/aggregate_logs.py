@@ -6,7 +6,7 @@ from email.message import EmailMessage
 
 import pandas as pd
 
-from noaa_metrics.constants.paths import (
+from constants.paths import (
     JSON_OUTPUT_FILEPATH,
     REPORT_OUTPUT_DIR,
     REPORT_OUTPUT_FILEPATH,
@@ -75,7 +75,6 @@ def downloads_by_day(log_df: pd.DataFrame) -> pd.DataFrame:
     by_day_df.columns = by_day_df.columns.droplevel(0)
     by_day_df.index = by_day_df.index.rename("Date")
     by_day_df.loc["Total"] = by_day_df.sum()
-    breakpoint()
     return by_day_df
 
 
