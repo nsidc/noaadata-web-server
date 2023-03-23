@@ -6,7 +6,7 @@ from email.message import EmailMessage
 
 import pandas as pd
 
-from constants.paths import (
+from noaa_metrics.constants.paths import (
     JSON_OUTPUT_FILEPATH,
     REPORT_OUTPUT_DIR,
     REPORT_OUTPUT_FILEPATH,
@@ -75,6 +75,7 @@ def downloads_by_day(log_df: pd.DataFrame) -> pd.DataFrame:
     by_day_df.columns = by_day_df.columns.droplevel(0)
     by_day_df.index = by_day_df.index.rename("Date")
     by_day_df.loc["Total"] = by_day_df.sum()
+    breakpoint()
     return by_day_df
 
 
@@ -102,13 +103,13 @@ def df_to_csv(df: pd.DataFrame, header: str, output_csv):
         df.to_csv(file, header=True, index=True)
 
 
-def get_month(date: str) -> str:
+def get_month(date):
     date = dt.datetime.strptime(date, "%Y-%m-%d")
     month = calendar.month_name[(date.month)]
     return month
 
 
-def get_year(date: str):
+def get_year(date):
     date = dt.datetime.strptime(date, "%Y-%m-%d")
     year = date.year
     return year
