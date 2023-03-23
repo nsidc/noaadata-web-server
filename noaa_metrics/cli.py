@@ -38,27 +38,29 @@ def cli():
 )
 @click.option(
     '-s',
-    '--start-date',
+    '--start_date',
     help='Start date (YYYY-MM)',
     type=DateType(),
 )
 @click.option(
     '-e',
-    '--end-date',
+    '--end_date',
     help='End date (YYYY-MM)',
     type=DateType(),
 )
 @click.option(
     '-m',
-    '--mail-to',
-    help='',
-    type=click.Choice(region_choices),
-    default='all',
-    show_default=True,
+    '--mailto',
+    help='List string of emails to send report to.',
 )
-def process(start_date, end_date, mail-to):
+def process(start_date, end_date, mailto):
     """Generate NOAA downlaods metric report."""
-
+    from aggregate_logs import main
+    main(
+        start_date=start_date,
+        end_date=end_date,
+        mailto=mailto
+    )
 
 if __name__ == '__main__':
     cli()

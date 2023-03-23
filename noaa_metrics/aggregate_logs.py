@@ -5,12 +5,11 @@ from email.message import EmailMessage
 
 import pandas as pd
 
-from noaa_metrics.constants.paths import (
+from constants.paths import (
     JSON_OUTPUT_FILEPATH,
     REPORT_OUTPUT_DIR,
     REPORT_OUTPUT_FILEPATH,
 )
-from noaa_metrics.misc import ProcessedLogFields
 
 
 def create_dataframe(JSON_OUTPUT_FILEPATH) -> pd.DataFrame:
@@ -18,8 +17,11 @@ def create_dataframe(JSON_OUTPUT_FILEPATH) -> pd.DataFrame:
     all_log_df = pd.read_json(JSON_OUTPUT_FILEPATH)
     return all_log_df
 
-def select_within_date_range(all_log_df: pd.DataFrame, start_date: dt.date, end_date: dt.date):
+def select_within_date_range(all_log_df: pd.DataFrame, start_date, end_date):
     """ Reduce the dataframe to just the dates needed."""
+    breakpoint()
+    start_date = dt.datetime.strptime(start_date, "%Y-%m-%d")
+    end_date = dt.datetime(end_date)
     log_df = all_log_df.loc[all_log_df['date'].between(start_date, end_date)]
     return log_df
 
@@ -124,17 +126,18 @@ def email_full_report(full_report, start_date, end_date, mailto: str):
         s.send_message(msg)
 
 
-def main():
+def main(start_date, end_date, mailto):
 
     all_log_df = create_dataframe(JSON_OUTPUT_FILEPATH)
-    log_df = select_within_date_range(all_log_df, "2023-02-01", "2023-03-05")
+    log_df = select_within_date_range(all_log_df, start_date, end_date)
     summary_df = get_period_summary_stats(log_df)
     by_dataset_df = downloads_by_dataset(log_df)
     by_day_df = downloads_by_day(log_df)
     by_location_df = downloads_by_tld(log_df)
 
     summary_csv = df_to_csv(
-        summary_df, "NOAA Requests for Entire Period\n\n", REPORT_OUTPUT_FILEPATH
+        # TODO: Get months in the title here
+        summary_df, "NOAA Requests for Period\n\n", REPORT_OUTPUT_FILEPATH
     )
     by_day_csv = df_to_csv(by_day_df, "\nTransfers by Day\n\n", REPORT_OUTPUT_FILEPATH)
     by_dataset_csv = df_to_csv(
@@ -145,9 +148,8 @@ def main():
     )
 
     email_full_report(
-        REPORT_OUTPUT_FILEPATH, "2023-02-01", "2023-03-05", ("roma8902@colorado.edu", "ann.windnagel@colorado.edu") 
+        REPORT_OUTPUT_FILEPATH, start_date, end_date, mailto 
     )
-    ...
 
 
 if __name__ == "__main__":
