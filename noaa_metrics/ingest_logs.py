@@ -75,6 +75,8 @@ def get_dataset_from_path(log_fields_raw: RawLogFields) -> str:
         dataset = "nsidc-0057"
     elif "nsidc-0008" in path:
         dataset = "nsidc-0008"
+    elif "GPDP" in path:
+        dataset = "GPDP"
     return dataset
 
 
