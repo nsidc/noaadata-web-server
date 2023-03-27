@@ -9,6 +9,7 @@ services:
       - "/projects/DATASETS/NOAA:/usr/share/nginx/html/NOAA:ro"
       - "/projects/DATASETS/nsidc0008_HARA_arctic_sounding_v01:/usr/share/nginx/html/nsidc-0008:ro"
       - "/projects/DATASETS/COADS-ARCTIC:/usr/share/nginx/html/nsidc-0057:ro"
+      - "/projects/DATASETS/GPDP:/usr/share/nginx/html/GPDP:ro"
       - "/share/logs/noaa-web:/var/log/nginx:rw"
     ports:
       - "80:80"

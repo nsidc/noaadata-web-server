@@ -2,6 +2,7 @@
 
 ## Setting up environment
 - TODO
+- Notes on adding a dataset that isnt under `/NOAA/`
 
 ## Running the code
 ```
