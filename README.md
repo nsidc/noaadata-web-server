@@ -4,11 +4,6 @@
 - TODO
 - Notes on adding a dataset that isnt under `/NOAA/`
 
-## Running the code
-```
-PYTHONPATH=. python noaa_metrics/ingest_logs.py
-```
-
 ## Configuring the nginx download log
 
 The nginx download logs are configured in `nginx/nginx.conf` and `nginx/default.conf`.
