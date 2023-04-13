@@ -3,7 +3,7 @@
 
 # Noaa-web-server
 
-Noaa-web-server is an NGINX server that hosts the NSIDC NOAA datasets.
+Noaa-web-server is an NGINX server that hosts the NSIDC NOAA datasets. Metrics are run on these downloads using this repo: https://github.com/nsidc/noaadata-web-server-metrics
 
 ## Level of Support
 
@@ -17,16 +17,15 @@ contact nsidc@nsidc.org for more information.
 
 Docker + docker-compose
 
-
 ## Installation
-TODO
+
 
 ## Usage
 
 
 ## Troubleshooting
 
-TODO
+If adding a new dataset that is not below `/NOAA/' it must be added to the `docker-compose.yml` under `volumes`. It will also need to be addressed in the `noaadata-web-server-metrics` repo in the `ingest_logs.py` file. 
 
 ## License
 
