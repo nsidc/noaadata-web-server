@@ -25,7 +25,7 @@ Docker + docker-compose
 
 ## Troubleshooting
 
-If adding a new dataset that is not below `/NOAA/' it must be added to the `docker-compose.yml` under `volumes`. It will also need to be addressed in the `noaadata-web-server-metrics` repo in the `ingest_logs.py` file. 
+If adding a new dataset that is not below `/NOAA/` it must be added to the `docker-compose.yml` under `volumes`. It will also need to be addressed in the `noaadata-web-server-metrics` repo in the `ingest_logs.py` file. 
 
 ## License
 
