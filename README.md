@@ -19,6 +19,9 @@ Docker + docker-compose
 
 ## Installation
 
+Install a pre-built image from DockerHub:
+
+docker pull nsidc/noaa-web-server
 
 ## Usage
 
