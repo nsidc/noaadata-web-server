@@ -1,4 +1,4 @@
-# NEXT_VERSION
+# v1.0.0 (2023-04-18)
 
 * reconfigure download log to include download status
 * move `noaa_metrics` scripts to separate repo
