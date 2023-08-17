@@ -13,6 +13,7 @@ COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 
 WORKDIR /usr/share/nginx/html
+COPY ./nginx/robots.txt .
 
 # Remove default index.html
 RUN rm index.html 50x.html
