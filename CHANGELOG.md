@@ -1,4 +1,4 @@
-# NEXT_VERSION
+# v1.1.0 (2023-08-17)
 
 * Add robots.txt
 
