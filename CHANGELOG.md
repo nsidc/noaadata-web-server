@@ -1,3 +1,7 @@
+# NEXT_VERSION
+
+* Add robots.txt
+
 # v1.0.1 (2023-04-18)
 
 * bugfix bumpversion setup.py
